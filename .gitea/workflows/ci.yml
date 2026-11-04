@@ -55,3 +55,33 @@ jobs:
           docker build --target runtime -t "guestbook:ci-$TAG" ./app
           docker image inspect "guestbook:ci-$TAG" --format '{{.Id}}'
           echo "Образ успешно собран: guestbook:ci-$TAG"
+
+      - name: Опубликовать образ в Gitea Registry
+        env:
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        run: |
+          set -eu
+
+          if [ -z "${REGISTRY_TOKEN:-}" ]; then
+            echo "Не найден секрет REGISTRY_TOKEN"
+            exit 1
+          fi
+
+          TAG=$(git rev-parse --short=7 HEAD)
+          IMAGE="localhost:3000/student/guestbook"
+
+          umask 077
+          DOCKER_CONFIG=$(mktemp -d)
+          export DOCKER_CONFIG
+          trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+
+          AUTH=$(printf 'student:%s' "$REGISTRY_TOKEN" | base64 | tr -d '\n')
+          printf '{"auths":{"localhost:3000":{"auth":"%s"}}}\n' "$AUTH" > "$DOCKER_CONFIG/config.json"
+
+          docker tag "guestbook:ci-$TAG" "$IMAGE:$TAG"
+          docker tag "guestbook:ci-$TAG" "$IMAGE:latest"
+
+          docker push "$IMAGE:$TAG"
+          docker push "$IMAGE:latest"
+
+          echo "Образы опубликованы: $TAG и latest"
