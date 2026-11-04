@@ -1,0 +1,14 @@
+{
+  "name": "ONIT Docker",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [80, 8000, 3000, 9090],
+  "portsAttributes": {
+    "80": {"label": "Гостевая книга ЛР2"},
+    "8000": {"label": "Гостевая книга ЛР1"},
+    "3000": {"label": "Gitea / Grafana"},
+    "9090": {"label": "Prometheus"}
+  }
+}
