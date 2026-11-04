@@ -1,0 +1,25 @@
+services:
+  app:
+    build: ./app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://app:secret@db:5432/guestbook
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: guestbook
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d guestbook"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  pgdata:
