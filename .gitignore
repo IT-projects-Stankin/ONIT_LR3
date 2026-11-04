@@ -18,3 +18,5 @@ venv/
 # Временные файлы
 *.log
 .DS_Store
+
+.runner-token

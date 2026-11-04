@@ -1,0 +1,18 @@
+services:
+  runner:
+    image: docker.io/gitea/runner:5
+    restart: unless-stopped
+    depends_on:
+      - gitea
+    environment:
+      GITEA_INSTANCE_URL: http://gitea:3000
+      GITEA_RUNNER_REGISTRATION_TOKEN_FILE: /run/secrets/runner_token
+      GITEA_RUNNER_NAME: onit-runner
+      GITEA_RUNNER_LABELS: "ubuntu-latest:docker://node:20-bookworm"
+    volumes:
+      - runner-data:/data
+      - ./.runner-token:/run/secrets/runner_token:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  runner-data:
