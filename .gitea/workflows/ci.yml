@@ -52,7 +52,7 @@ jobs:
       - name: Собрать приложение
         run: |
           TAG=$(git rev-parse --short=7 HEAD)
-          docker build --target runtime -t "guestbook:ci-$TAG" ./app
+          docker build --target runtime --build-arg APP_VERSION="$TAG" -t "guestbook:ci-$TAG" ./app
           docker image inspect "guestbook:ci-$TAG" --format '{{.Id}}'
           echo "Образ успешно собран: guestbook:ci-$TAG"
 

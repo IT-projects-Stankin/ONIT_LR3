@@ -16,6 +16,8 @@ RUN python -m pytest -q tests
 
 
 FROM base AS runtime
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
 
 COPY main.py .
 
