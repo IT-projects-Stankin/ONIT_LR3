@@ -5,12 +5,14 @@ services:
     depends_on:
       - gitea
     environment:
+      CONFIG_FILE: /config.yaml
       GITEA_INSTANCE_URL: http://gitea:3000
       GITEA_RUNNER_REGISTRATION_TOKEN_FILE: /run/secrets/runner_token
       GITEA_RUNNER_NAME: onit-runner
       GITEA_RUNNER_LABELS: "ubuntu-latest:docker://node:20-bookworm"
     volumes:
       - runner-data:/data
+      - ./runner-config.yaml:/config.yaml:ro
       - ./.runner-token:/run/secrets/runner_token:ro
       - /var/run/docker.sock:/var/run/docker.sock
 
