@@ -61,7 +61,7 @@ def add_message(request: Request, text: str = Form(...)):
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "fail"}
 
 
 @app.get("/version")
