@@ -26,3 +26,32 @@ jobs:
         run: |
           cd app
           ../.venv/bin/python -m pytest -q tests
+
+  build:
+    name: Сборка Docker-образа
+    needs: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Подготовить Docker CLI
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq ca-certificates curl
+          install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+          chmod a+r /etc/apt/keyrings/docker.asc
+          . /etc/os-release
+          printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian %s stable\n' "$(dpkg --print-architecture)" "$VERSION_CODENAME" > /etc/apt/sources.list.d/docker.list
+          apt-get update -qq
+          apt-get install -y -qq docker-ce-cli docker-buildx-plugin
+          docker version
+
+      - name: Собрать приложение
+        run: |
+          TAG=$(git rev-parse --short=7 HEAD)
+          docker build --target runtime -t "guestbook:ci-$TAG" ./app
+          docker image inspect "guestbook:ci-$TAG" --format '{{.Id}}'
+          echo "Образ успешно собран: guestbook:ci-$TAG"
