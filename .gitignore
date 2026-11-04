@@ -1,0 +1,20 @@
+# Локальные настройки и секреты
+.env
+.env.*
+!.env.example
+
+# Отчёты и документы
+reports/
+*.docx
+*.pdf
+
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+venv/
+
+# Временные файлы
+*.log
+.DS_Store
